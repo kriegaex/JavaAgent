@@ -5,7 +5,7 @@ The whole JVM is then instrumented using Frida to call the callStackToJSON metho
 
 ## Build
 
-`$ cd agent && make build`
+`$ cd agent && make build`  
 `$ cd ../launcher && make build`
 
 ## Run
