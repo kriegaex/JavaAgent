@@ -4,7 +4,7 @@ build:
 	rm src/*.class
 
 run:
-	java -Djava.compiler=NONE -jar launcher.jar /workdir/agent/agent.jar $(shell pidof java)
+	java -Djava.compiler=NONE -jar launcher.jar ../agent/agent.jar $(shell pidof java)
 
 clean:
 	rm -f *.jar *.class
