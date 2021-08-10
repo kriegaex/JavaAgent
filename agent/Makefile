@@ -1,9 +1,9 @@
 build:
-	javac -cp $(CLASSPATH) *.java
-	jar cmvf MANIFEST.MF agent.jar *.class
-	rm *.class
+	javac -cp $(CLASSPATH) src/*.java
+	jar cmvf MANIFEST.MF agent.jar src/*.class
+	rm src/*.class
 
 clean:
-	rm -f *.jar *.class
+	rm -f *.jar src/*.class
 
 .PHONY: build clean
