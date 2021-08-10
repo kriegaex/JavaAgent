@@ -10,4 +10,6 @@ The whole JVM is then instrumented using Frida to call the callStackToJSON metho
 
 ## Run
 
+To run the agent, a JVM must be running, to which it will attach automatically.
+
 `$ cd launcher && make run`
