@@ -1,0 +1,5 @@
+Class-Path: . /bytebuddy/bytebuddy.jar
+Agent-Class: src.Agent
+Premain-Class: src.Agent
+Can-Redefine-Classes: true
+Can-Retransform-Classes: true
