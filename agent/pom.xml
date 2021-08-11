@@ -18,16 +18,42 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <!-- Self-inject agent into bootstrap class path-->
-              <Boot-Class-Path>C:/Users/alexa/Documents/java-src/SO_JavaAgent_ByteBuddy_68715127/agent/target/${project.build.finalName}.jar c:/Users/Alexa/.m2/repository/net/bytebuddy/byte-buddy/1.11.12/byte-buddy-1.11.12.jar</Boot-Class-Path>
-              <Agent-Class>src.Agent</Agent-Class>
-              <Premain-Class>src.Agent</Premain-Class>
+              <Agent-Class>org.acme.agent.Agent</Agent-Class>
+              <Premain-Class>org.acme.agent.Agent</Premain-Class>
               <Can-Redefine-Classes>true</Can-Redefine-Classes>
               <Can-Retransform-Classes>true</Can-Retransform-Classes>
-<!--              <Can-Set-Native-Method-Prefix>true</Can-Set-Native-Method-Prefix>-->
             </manifestEntries>
           </archive>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.4</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <filters>
+                <filter>
+                  <artifact>net.bytebuddy:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/MANIFEST.MF</exclude>
+                  </excludes>
+                </filter>
+                <filter>
+                  <artifact>de.scrum-master.stackoverflow:agent-deps</artifact>
+                  <excludes>
+                    <exclude>**/*</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -37,6 +63,11 @@
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy</artifactId>
       <version>${bytebuddy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.scrum-master.stackoverflow</groupId>
+      <artifactId>agent-deps</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

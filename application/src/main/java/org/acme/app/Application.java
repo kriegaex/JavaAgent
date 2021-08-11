@@ -1,4 +1,4 @@
-package src;
+package org.acme.app;
 
 import java.lang.management.ManagementFactory;
 import java.util.Random;

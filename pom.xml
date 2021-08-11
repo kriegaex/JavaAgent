@@ -18,6 +18,7 @@
 
   <modules>
     <module>agent</module>
+    <module>agent-deps</module>
     <module>launcher</module>
     <module>application</module>
   </modules>

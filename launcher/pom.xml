@@ -14,14 +14,26 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
+        <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <archive>
-            <manifestEntries>
-              <Main-Class>src.Launcher</Main-Class>
-            </manifestEntries>
+            <manifest>
+              <mainClass>org.acme.agent.Launcher</mainClass>
+            </manifest>
           </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
         </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

@@ -1,4 +1,4 @@
-package src;
+package org.acme.agent;
 
 public class CompleteSTE {
   public String clazz, method, args_types[], args[];
