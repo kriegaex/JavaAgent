@@ -7,22 +7,12 @@ import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.util.Arrays;
 import java.util.List;
 
 import static net.bytebuddy.agent.builder.AgentBuilder.RedefinitionStrategy.RETRANSFORMATION;
-import static net.bytebuddy.matcher.ElementMatchers.any;
-import static net.bytebuddy.matcher.ElementMatchers.isMethod;
-import static net.bytebuddy.matcher.ElementMatchers.nameContains;
-import static net.bytebuddy.matcher.ElementMatchers.nameEndsWith;
-import static net.bytebuddy.matcher.ElementMatchers.nameMatches;
-import static net.bytebuddy.matcher.ElementMatchers.nameStartsWith;
-import static net.bytebuddy.matcher.ElementMatchers.named;
-import static net.bytebuddy.matcher.ElementMatchers.none;
-import static net.bytebuddy.matcher.ElementMatchers.not;
+import static net.bytebuddy.matcher.ElementMatchers.*;
 
 public class Transformer {
 
@@ -87,7 +77,7 @@ public class Transformer {
       .and(not(named("toString")))
       .and(not(named("valueOf")));
 
-  public static void init(Instrumentation inst, File transformerJar) throws IOException, ClassNotFoundException {
+  public static void init(Instrumentation inst) throws ClassNotFoundException {
     warmUpPlatformClassLoader();
     installTransformer(inst);
     System.out.println("Transformer installed");
