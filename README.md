@@ -33,7 +33,11 @@ launcher in console 2 attaches the agent and the latter transforms the applicati
 using Byte Buddy, logging its activity to the console.
 
 ```shell
+# Run application as executable JAR
 java -jar application/target/application-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+# Run application from IDE
+java -cp ... org.acme.app.Application
 ```
 
 ### Console 2 - launcher, dynamically attaching agent
@@ -42,6 +46,16 @@ Here we start the launcher, telling it which agent _(agent-1.0-SNAPSHOT.jar)_ to
 is determined by using JDK command line tool `jps`, filtering its output via `jps | grep -E 'application-.*\.jar' |
 sed -E 's/^([0-9]+).*/\1/'` in order to get the PID.
 
+Instead of determining the PID by yourself, the launcher can also call `jps` on your behalf, if instead of a numerical
+PID you simply specify a regex matching the main class or main JAR in the `jps` output. So you could call either of 
+
 ```shell
+# Run both application and launcher as executable JARs, determine PID manually (tedious)
 java -jar launcher/target/launcher-1.0-SNAPSHOT-jar-with-dependencies.jar agent/target/agent-1.0-SNAPSHOT.jar $(jps | grep -E 'application-.*\.jar' | sed -E 's/^([0-9]+).*/\1/')
+
+# Run both application and launcher as executable JARs, use regex to match application JAR name
+java -jar launcher/target/launcher-1.0-SNAPSHOT-jar-with-dependencies.jar agent/target/agent-1.0-SNAPSHOT.jar application-.*\.jar
+
+# Run both application and launcher from IDE, use regex to match application main class name
+java -cp ... org.acme.agent.Launcher agent/target/agent-1.0-SNAPSHOT.jar Application
 ```
