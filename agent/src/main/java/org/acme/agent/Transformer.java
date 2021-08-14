@@ -8,8 +8,6 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 
 import java.lang.instrument.Instrumentation;
-import java.util.Arrays;
-import java.util.List;
 
 import static net.bytebuddy.agent.builder.AgentBuilder.RedefinitionStrategy.RETRANSFORMATION;
 import static net.bytebuddy.matcher.ElementMatchers.*;
@@ -18,12 +16,6 @@ public class Transformer {
 
   private static final String AGENT_PACKAGE = "org.acme.agent.";
   private static final String BYTEBUDDY_PACKAGE = "net.bytebuddy.";
-
-  private static final List<String> WARM_UP_CLASSES = Arrays.asList(
-    "java.util.Stack",
-    AGENT_PACKAGE + "TraceStackInfo",
-    AGENT_PACKAGE + "CompleteSTE"
-  );
 
   private static final ElementMatcher.Junction<TypeDescription> IGNORED_TYPES =
     nameStartsWith(AGENT_PACKAGE)
@@ -78,22 +70,8 @@ public class Transformer {
       .and(not(named("valueOf")));
 
   public static void init(Instrumentation inst) throws ClassNotFoundException {
-    warmUpPlatformClassLoader();
     installTransformer(inst);
     System.out.println("Transformer installed");
-  }
-
-  /**
-   * Avoid "ClassCircularityError: .../TraceStackInfo" by pre-loading some classes before installing advice
-   *
-   * @throws ClassNotFoundException
-   */
-  private static void warmUpPlatformClassLoader() throws ClassNotFoundException {
-    // Java 9+: ClassLoader.getPlatformClassLoader()
-    ClassLoader platformClassLoader = ClassLoader.getSystemClassLoader().getParent();
-    for (String warmUpClass : WARM_UP_CLASSES) {
-      platformClassLoader.loadClass(warmUpClass);
-    }
   }
 
   private static void installTransformer(Instrumentation inst) {
@@ -101,7 +79,7 @@ public class Transformer {
       .disableClassFormatChanges()
       .with(RETRANSFORMATION)
       .with(RedefinitionStrategy.Listener.StreamWriting.toSystemError())
-      .with(AgentBuilder.Listener.StreamWriting.toSystemError()/*.withTransformationsOnly()*/)
+      .with(AgentBuilder.Listener.StreamWriting.toSystemError().withTransformationsOnly())
       .with(AgentBuilder.InstallationListener.StreamWriting.toSystemError())
       .ignore(none())
       .ignore(IGNORED_TYPES)
