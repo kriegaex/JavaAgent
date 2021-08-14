@@ -27,13 +27,9 @@ public class TraceAdvice {
       args_str[i] = args[i].toString();
     }
     String currentThread = Thread.currentThread().getName();
-    if (STACKS.containsKey(currentThread)) {
-      STACKS.get(currentThread).add(new CompleteSTE(method.getDeclaringClass().getName(), method.getName(), ts_str, args_str));
-    }
-    else {
+    if (!STACKS.containsKey(currentThread))
       STACKS.put(currentThread, new Stack<>());
-      STACKS.get(currentThread).add(new CompleteSTE(method.getDeclaringClass().getName(), method.getName(), ts_str, args_str));
-    }
+    STACKS.get(currentThread).add(new CompleteSTE(method.getDeclaringClass().getName(), method.getName(), ts_str, args_str));
   }
 
   @Advice.OnMethodExit
