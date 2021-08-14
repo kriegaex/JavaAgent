@@ -19,14 +19,16 @@ public class Transformer {
   private static final String AGENT_PACKAGE = "org.acme.agent.";
   private static final String BYTEBUDDY_PACKAGE = "net.bytebuddy.";
 
-  private static final List<String> WARM_UP_CLASSES = Arrays.asList(
-    "java.util.Stack",
-    AGENT_PACKAGE + "TraceStackInfo",
-    AGENT_PACKAGE + "CompleteSTE"
+  // TODO: remove after no longer testing https://github.com/raphw/byte-buddy/issues/193
+  private static final List<Class<?>> WARM_UP_CLASSES = Arrays.asList(
+    TraceStackInfo.class,
+    CompleteSTE.class
   );
 
   private static final ElementMatcher.Junction<TypeDescription> IGNORED_TYPES =
-    nameStartsWith(AGENT_PACKAGE)
+    (nameStartsWith(AGENT_PACKAGE)
+      // TODO: remove after no longer testing https://github.com/raphw/byte-buddy/issues/193
+      .and(not(nameContains("TraceStackInfo"))).and(not(nameContains("CompleteSTE"))))
       .or(nameStartsWith(BYTEBUDDY_PACKAGE))
       .or(nameStartsWith("com.sun.proxy"))
       .or(nameStartsWith("java.instrument."))
@@ -78,22 +80,8 @@ public class Transformer {
       .and(not(named("valueOf")));
 
   public static void init(Instrumentation inst) throws ClassNotFoundException {
-    warmUpPlatformClassLoader();
     installTransformer(inst);
     System.out.println("Transformer installed");
-  }
-
-  /**
-   * Avoid "ClassCircularityError: .../TraceStackInfo" by pre-loading some classes before installing advice
-   *
-   * @throws ClassNotFoundException
-   */
-  private static void warmUpPlatformClassLoader() throws ClassNotFoundException {
-    // Java 9+: ClassLoader.getPlatformClassLoader()
-    ClassLoader platformClassLoader = ClassLoader.getSystemClassLoader().getParent();
-    for (String warmUpClass : WARM_UP_CLASSES) {
-      platformClassLoader.loadClass(warmUpClass);
-    }
   }
 
   private static void installTransformer(Instrumentation inst) {
@@ -103,6 +91,8 @@ public class Transformer {
       .with(RedefinitionStrategy.Listener.StreamWriting.toSystemError())
       .with(AgentBuilder.Listener.StreamWriting.toSystemError()/*.withTransformationsOnly()*/)
       .with(AgentBuilder.InstallationListener.StreamWriting.toSystemError())
+      // TODO: remove after no longer testing https://github.com/raphw/byte-buddy/issues/193
+      .warmUp(WARM_UP_CLASSES)
       .ignore(none())
       .ignore(IGNORED_TYPES)
       .type(any())
